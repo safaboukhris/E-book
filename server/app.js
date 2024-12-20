@@ -4,8 +4,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose')
 const { authRoute } = require ("./routes/auth")
+const { booksRoute } = require("./routes/book")
+const { contactRoute } = require ("./routes/contact")
+const {favoritesRouter} = require ('./routes/favorite')
+const { imageRouter} = require('./routes/upload')
 const cors = require ("cors")
 const passport = require('passport')
+
 
 var app = express();
 /*  config passport */
@@ -16,8 +21,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/file', express.static(path.join(__dirname, 'public', 'files')));
+app.use("/uploads",express.static(__dirname + "/uploads"))
 
 app.use(cors())
 mongoose
@@ -27,5 +32,11 @@ mongoose
 
 
 
-app.use("/api", authRoute)
+app.use("/api", [authRoute,  booksRoute])
+app.use("/api",contactRoute)
+app.use("/api", favoritesRouter)
+app.use("/img", imageRouter)
+
 module.exports = app;
+
+
